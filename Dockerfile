@@ -17,4 +17,15 @@ echo "################## Elapsed: $(expr $(date "+%s") - $STARTTIME) seconds ###
 FROM scratch
 COPY --from=builder / /
 
+ENV COLUMNS 100
+ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php-fpm
+
+HEALTHCHECK --interval=5s --timeout=60s --retries=3 CMD /healthcheck.sh
+
+WORKDIR /var/www/html
+
+ENTRYPOINT ["/usr/local/sbin/php-fpm"]
+
+CMD ["--nodaemonize"]
+
 USER php
